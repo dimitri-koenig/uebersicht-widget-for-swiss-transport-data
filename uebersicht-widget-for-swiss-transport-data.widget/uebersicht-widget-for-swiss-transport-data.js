@@ -14,7 +14,7 @@ connections: [
 	}
 ],
 
-style: '#swissTransportData { position: relative; left: 570px; background-color: rgba(#fff, 0.5); padding: 0 5px 10px; border-radius: 5px; } #lastUpdate { margin-top: 20px; font-size: 85%; color: #333; } .loader { text-align: center; margin-top: -15px; margin-bottom: -15px; } table { margin-bottom: 5px; } .connections table:nth-of-type(2n+1) { background-color: rgba(#f9f9f9, 0.5); } .vehicle { width: 70px; } .time { width: 50px; } .station { width: 220px; } .to { width: 220px; }',
+style: '#swissTransportData { position: relative; left: 570px; background-color: rgba(#fff, 0.5); padding: 0 5px 10px; border-radius: 5px; } #lastUpdate { margin-top: 20px; font-size: 85%; color: #333; } .loader { text-align: center; margin-top: -15px; margin-bottom: -15px; transition: all 0.4s ease 0s; } .content-container { transition: all 0.4s ease 0s; } table { margin-bottom: 5px; } .connections table:nth-of-type(2n+1) { background-color: rgba(#f9f9f9, 0.5); } .vehicle { width: 70px; } .time { width: 50px; } .station { width: 220px; } .to { width: 220px; }',
 
 // 1min = 1000 * 60s
 refreshFrequency: 1000 * 60,
@@ -49,8 +49,8 @@ update: function(output, domEl) {
 	var lastUpdate = 'Last update: ' + (new Date).toLocaleTimeString() + ' (every ' + (self.refreshFrequency/1000) + 's)';
 	$('#lastUpdate').html(lastUpdate);
 
-	$('.loader').css('visibility', 'visible');
-	$('.content-container').css('opacity', '0.5');
+	$('.loader').css('opacity', 1);
+	$('.content-container').css('opacity', 0.5);
 
 	$.each(this.connections, function(index, connection) {
 		var ajaxObject = $.ajax({
@@ -62,8 +62,8 @@ update: function(output, domEl) {
 			success: function(data) {
 				var content = self.renderConnectionData(data, connection);
 
-				$('#loader-' + connection.identifier).css('visibility', 'hidden');
-				$('#' + connection.identifier).html(content).css('opacity', '1');
+				$('#loader-' + connection.identifier).css('opacity', 0);
+				$('#' + connection.identifier).html(content).css('opacity', 1);
 			}
 		});
 	});
