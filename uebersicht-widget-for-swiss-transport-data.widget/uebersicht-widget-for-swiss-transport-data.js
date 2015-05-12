@@ -86,7 +86,7 @@ renderConnectionData: function(connectionResponse, connectionRequest) {
 				content += '<td class="vehicle">' + vehicle + '</td>';
 				content += '<td class="time">' + self.getTime(section.departure.departure) + '</td>';
 				content += '<td class="station">' + section.departure.station.name + '</td>';
-				content += '<td class="to">(-> ' + section.journey.to + ')</td>';
+				content += '<td class="to">' + self.getJourneyTime(section.departure.departureTimestamp, section.arrival.arrivalTimestamp) + '\' (-> ' + section.journey.to + ')</td>';
 				content += '</tr>';
 
 				// to
@@ -126,4 +126,8 @@ getVehicle: function(journeyData) {
 
 getTime: function(date) {
 	return date.replace(/.*T([0-9]{2}:[0-9]{2}).*/, '$1');
+},
+
+getJourneyTime: function(departureTimestamp, arrivalTimestamp) {
+	return (arrivalTimestamp - departureTimestamp) / 60;
 }
