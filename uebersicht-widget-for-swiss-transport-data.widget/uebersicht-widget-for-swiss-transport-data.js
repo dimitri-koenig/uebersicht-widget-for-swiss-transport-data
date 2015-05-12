@@ -14,7 +14,7 @@ connections: [
 	}
 ],
 
-style: '#swissTransportData { position: relative; left: 570px; background-color: rgba(#fff, 0.5); padding: 0 5px 10px; border-radius: 5px; } #lastUpdate { margin-top: 20px; font-size: 85%; color: #333; } table { margin-bottom: 5px; } .connections table:nth-of-type(2n+1) { background-color: rgba(#f9f9f9, 0.5); } .vehicle { width: 70px; } .time { width: 50px; } .station { width: 220px; } .to { width: 220px; }',
+style: '#swissTransportData { position: relative; left: 570px; background-color: rgba(#fff, 0.5); padding: 0 5px 10px; border-radius: 5px; } #lastUpdate { margin-top: 20px; font-size: 85%; color: #333; } .loader { text-align: center; margin-top: -15px; margin-bottom: -15px; } table { margin-bottom: 5px; } .connections table:nth-of-type(2n+1) { background-color: rgba(#f9f9f9, 0.5); } .vehicle { width: 70px; } .time { width: 50px; } .station { width: 220px; } .to { width: 220px; }',
 
 // 1min = 1000 * 60s
 refreshFrequency: 1000 * 60,
@@ -35,7 +35,7 @@ render: function() {
 			'connections/sections'
 		];
 
-		content += '<div id="' + connection.identifier + '"></div>';
+		content += '<h3>' + connection.title + '</h3><div id="loader-' + connection.identifier + '" class="loader"><img src="uebersicht-widget-for-swiss-transport-data.widget/loader.gif" width="220" height="20" /></div><div id="' + connection.identifier + '" class="content-container"></div>';
 	});
 
 	content += '<p id="lastUpdate"></p></div></div>';
@@ -49,9 +49,10 @@ update: function(output, domEl) {
 	var lastUpdate = 'Last update: ' + (new Date).toLocaleTimeString() + ' (every ' + (self.refreshFrequency/1000) + 's)';
 	$('#lastUpdate').html(lastUpdate);
 
-	$.each(this.connections, function(index, connection) {
-		$('#' + connection.identifier).html('Loading "' + connection.title + '"...');
+	$('.loader').css('visibility', 'visible');
+	$('.content-container').css('opacity', '0.5');
 
+	$.each(this.connections, function(index, connection) {
 		var ajaxObject = $.ajax({
 			url: 'http://transport.opendata.ch/v1/connections',
 			dataType: 'json',
@@ -60,22 +61,19 @@ update: function(output, domEl) {
 			data: connection,
 			success: function(data) {
 				var content = self.renderConnectionData(data, connection);
-				$('#' + connection.identifier).html(content);
-			},
-			fail: function(data) {
-				var content = ' failed';
-				$('#' + connection.identifier).append(content);
-			},
+
+				$('#loader-' + connection.identifier).css('visibility', 'hidden');
+				$('#' + connection.identifier).html(content).css('opacity', '1');
+			}
 		});
 	});
 },
 
 renderConnectionData: function(connectionResponse, connectionRequest) {
 	var self = this,
-		count = 0,
-		content = '<h3>' + connectionRequest.title + '</h3>';
+		count = 0;
 
-	content += '<div class="connections">';
+	content = '<div class="connections">';
 	$.each(connectionResponse.connections, function(index, connection) {
 		content += '<table><tbody>';
 
